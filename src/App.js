@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Navigate } from 'react-router-dom';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+import EmployeeList from './components/EmployeeList';
+import CreateEmployee from './components/CreateEmployee';
+import EditEmployee from './components/EditEmployee';
 
-function App() {
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const loggedIn = localStorage.getItem('isLoggedIn');
+    setIsLoggedIn(!!loggedIn);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Route exact path="/" render={() => (isLoggedIn ? <Navigate to="/dashboard" /> : <Login setIsLoggedIn={setIsLoggedIn} />)} />
+      <Route path="/dashboard" render={() => (isLoggedIn ? <Dashboard /> : <Navigate to="/" />)} />
+      <Route path="/employee-list" render={() => (isLoggedIn ? <EmployeeList /> : <Navigate to="/" />)} />
+      <Route path="/create-employee" render={() => (isLoggedIn ? <CreateEmployee /> : <Navigate to="/" />)} />
+      <Route path="/edit-employee/:id" render={() => (isLoggedIn ? <EditEmployee /> : <Navigate to="/" />)} />
+    </Router>
   );
-}
+};
 
 export default App;
